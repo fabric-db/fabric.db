@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          test -f README.md
+          test -f Dockerfile
+          test -f LICENSE
+          test -f SECURITY.md
+          test -f GOVERNANCE.md
+          test -f CONTRIBUTING.md
+
+      - name: Check required directories
+        run: |
+          test -d docs
+          test -d schema
+          test -d surrealdb
+
+      - name: Check required schema artifacts
+        run: |
+          test -f schema/event.schema.json
+          test -f surrealdb/schema.surql
+
+  json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          find . -name "*.json" -print0 | xargs -0 -I{} python -m json.tool "{}" > /dev/null
