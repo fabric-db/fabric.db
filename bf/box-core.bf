@@ -3,7 +3,7 @@
 
 box box.v1 {
   definition "the smallest building block of fabric"
-  meaning "a bounded reality that holds nodes and the agreements between them"
+  meaning "one work box is one real-world, real-time, tangible unit of work"
 
   nature immutable_canonical_core
   scale atomic_particle
@@ -11,11 +11,45 @@ box box.v1 {
   model digital_twin_meta_model
   referent real_world
 
+  contains identity required
+  contains time_boundary required
+  contains unit_of_work required
   contains node required
   contains agreement required
   contains state required
   contains branch required
   contains link required
+
+  identity {
+    definition "the unique identity of the box as a bounded reality"
+    requires box_id
+    requires holder
+    requires owner
+    requires trust_domain
+    requires lifecycle
+    requires created_at
+  }
+
+  time_boundary {
+    definition "the real-time boundary within which the box exists, is observed, and is accountable"
+    requires valid_from
+    requires valid_to optional
+    requires observed_at
+    requires version
+    requires lifecycle
+  }
+
+  unit_of_work {
+    definition "the tangible real-world work held by the box"
+    requires work_id
+    requires objective
+    requires actor
+    requires real_world_referent
+    requires expected_outcome
+    requires constraints
+    requires acceptance_criteria
+    requires completion_state
+  }
 
   node {
     definition "an identifiable thing inside the bounded reality"
@@ -65,6 +99,10 @@ box box.v1 {
   }
 
   invariant smallest_building_block_of_fabric
+  invariant one_work_box_equals_one_real_world_real_time_tangible_unit
+  invariant box_has_identity
+  invariant box_is_bounded_by_time
+  invariant box_is_unit_of_work
   invariant bounded_reality_is_explicit
   invariant every_node_is_identifiable
   invariant every_agreement_has_parties
@@ -77,9 +115,12 @@ box box.v1 {
 }
 
 fabric_db fabric_db.v1 {
-  definition "a composition of boxes that digitally twin real-world nodes, agreements, state, change, relation, and accountability"
+  definition "a composition of work boxes that digitally twin real-world, real-time, tangible units of work"
 
   constructed_from box.v1
+  preserves identity
+  preserves time_boundary
+  preserves unit_of_work
   preserves node
   preserves agreement
   preserves state
