@@ -1,8 +1,8 @@
 // fabricdb-node.bf
-// fabric.db database rule: every node is a fabric.
+// fabric.db database rule: every node participates in fabric.
 
 fabric_db fabric_db_node_model.v1 {
-  definition "fabric.db is the database where every node is a fabric"
+  definition "fabric.db is the database where every node participates in fabric"
 
   stores node
   stores box
@@ -11,9 +11,10 @@ fabric_db fabric_db_node_model.v1 {
   stores link
   stores stream
 
-  rule every_node_is_fabric
+  rule every_node_participates_in_fabric
+  rule node_is_not_entire_fabric
   rule every_node_has_identity
-  rule every_node_has_boundary
+  rule every_node_has_accessibility
   rule every_node_has_state
   rule every_node_has_agreements
   rule every_node_has_links
@@ -25,7 +26,7 @@ fabric_db fabric_db_node_model.v1 {
   rule encrypted_always
   rule no_implicit_trust
 
-  invariant fabricdb_is_composition_of_fabric_nodes
+  invariant fabricdb_is_composition_of_nodes_boxes_agreements_and_streams
   invariant node_is_not_flat_record
   invariant node_preserves_meaning
   invariant node_boundary_is_not_touched
