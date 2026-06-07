@@ -4,6 +4,7 @@
 box box.v1 {
   definition "the smallest building block of fabric"
   meaning "one work box is one real-world, real-time, tangible unit of work"
+  purpose "bring stability, fairness, and equality to work by bounding every unit of work under explicit identity, time, state, agreement, and accountability"
 
   nature immutable_canonical_core
   scale atomic_particle
@@ -103,6 +104,9 @@ box box.v1 {
   invariant box_has_identity
   invariant box_is_bounded_by_time
   invariant box_is_unit_of_work
+  invariant box_brings_stability_by_preserving_clear_state_and_boundaries
+  invariant box_brings_fairness_by_applying_same_agreements_to_same_conditions
+  invariant box_brings_equality_by_making_every_unit_of_work_identifiable_and_auditable
   invariant bounded_reality_is_explicit
   invariant every_node_is_identifiable
   invariant every_agreement_has_parties
@@ -116,6 +120,7 @@ box box.v1 {
 
 fabric_db fabric_db.v1 {
   definition "a composition of work boxes that digitally twin real-world, real-time, tangible units of work"
+  purpose "make work stable, fair, equal, traceable, and accountable through boxes"
 
   constructed_from box.v1
   preserves identity
@@ -128,4 +133,7 @@ fabric_db fabric_db.v1 {
   preserves link
   preserves provenance
   preserves conformance
+  preserves stability
+  preserves fairness
+  preserves equality
 }
