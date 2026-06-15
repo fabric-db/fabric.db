@@ -1,0 +1,32 @@
+name: AnyDB Conformance Gate
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-anydb:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Run AnyDB Protocol Validator
+        run: |
+          python tools/validate_anydb_protocol.py
+
+      - name: Enforce Conformance
+        run: |
+          echo "Running AnyDB governance checks..."
+          python tools/validate_anydb_protocol.py
