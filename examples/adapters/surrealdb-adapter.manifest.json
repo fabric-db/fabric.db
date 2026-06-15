@@ -1,0 +1,26 @@
+{
+  "$schema": "https://fabric.db/schemas/anydb-adapter.schema.json",
+  "schemaVersion": "anydb-adapter-v0.1",
+  "adapter": "surrealdb-anydb-adapter",
+  "provider": "surrealdb",
+  "version": "0.1.0",
+  "language": "rust",
+  "runtime": "native",
+  "providerDeclaration": "examples/conformance/providers/surrealdb-provider.json",
+  "conformance": "anydb-reconciled-v0.1",
+  "entrypoints": {
+    "library": "crates/anydb-adapter-surrealdb",
+    "container": "ghcr.io/fabric-db/anydb-adapter-surrealdb"
+  },
+  "maintainers": [
+    {
+      "name": "fabric-db"
+    }
+  ],
+  "test": {
+    "fixtureProfile": "anydb-reconciled-v0.1",
+    "namespace": "anydb_conformance",
+    "supportsDeterministicMode": true,
+    "supportsDryRun": true
+  }
+}
