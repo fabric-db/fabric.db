@@ -7,222 +7,223 @@
 
 ## Abstract
 
-Fabric is a distributed governance architecture for managing state transitions across multiple organizations under strict identity, privacy, policy, and trust constraints.
+Fabric defines a distributed governance architecture for multi-organization systems where all data is treated as a **governed state transition** rather than passive storage or uncontrolled flow.
 
-It defines a system where data is not stored or transferred freely, but instead flows as **governed state transitions** validated through deterministic layers:
+It introduces a deterministic execution model built on five enforcement layers:
 
 - PII Gateway (privacy enforcement)
-- UGD (universal governance and identity)
-- Trust Graph (adaptive inter-organizational trust)
-- AnyDB (semantic interoperability)
-- Federation Router (cross-org routing)
-- Fabric Engine (execution and reconciliation)
+- UGD (identity + policy governance)
+- Trust Graph (adaptive inter-org trust computation)
+- AnyDB (semantic interoperability layer)
+- Federation Router (cross-org routing control)
+- Fabric Engine (state execution + reconciliation)
 
 ---
 
-## 1. Introduction
+## 1. Formal System Model
 
-Modern distributed systems suffer from:
-
-- fragmented governance
-- inconsistent identity models
-- uncontrolled data replication
-- lack of trust-aware routing
-- weak cross-organization boundaries
-
-Fabric addresses these by introducing a **constitutional governance model for data systems**.
-
----
-
-## 2. Core Problem
-
-In multi-organization systems:
-
-- data moves faster than governance
-- identity is not globally consistent
-- privacy violations occur at integration boundaries
-- trust is implicit, not computed
-
----
-
-## 3. Design Principle
-
-> All data is a state transition governed by identity, policy, trust, and provenance.
-
----
-
-## 4. System Architecture
-
-Fabric consists of layered enforcement domains:
+Fabric can be modeled as a tuple:
 
 ```text
-Intent
-  ↓
-PII Gateway
-  ↓
-UGD Policy Engine
-  ↓
-Trust Graph Evaluation
-  ↓
-AnyDB Semantic Mapping
-  ↓
-Federation Router
-  ↓
-Fabric Execution Engine
-  ↓
-Reconciliation Layer
+F = (I, P, T, D, R, S)
 ```
+
+Where:
+
+- I = Identity space (users, agents, orgs, services)
+- P = Policy space (UGD rules, authorization logic)
+- T = Trust space (dynamic weighted graph over entities)
+- D = Data space (normalized AnyDB semantic representations)
+- R = Routing function (Federation Router)
+- S = State machine (Fabric Engine)
+
+All transitions are deterministic functions over this tuple.
 
 ---
 
-## 5. Component Definitions
+## 2. Core Principle
+
+> All system behavior is reducible to validated and attributable state transitions under governance constraints.
+
+---
+
+## 3. Threat Model
+
+Fabric assumes adversarial conditions:
+
+- untrusted data sources
+- malicious cross-org requests
+- identity spoofing attempts
+- schema injection or corruption
+- unauthorized cross-boundary flows
+
+Mitigations:
+
+- mandatory PII filtering
+- deny-by-default policy engine
+- trust-weighted routing constraints
+- immutable event logging
+- full replay-based verification
+
+---
+
+## 4. Execution Semantics
+
+A valid operation follows:
+
+```text
+Command → PII Filter → Identity Resolution → Policy Evaluation → Trust Scoring → Semantic Mapping → Routing Decision → State Transition → Reconciliation
+```
+
+Each step is required and non-skippable.
+
+---
+
+## 5. Component Semantics
 
 ### 5.1 PII Gateway
-
-Responsible for:
-- detecting sensitive data
-- redacting or tokenizing identifiers
-- preventing raw PII propagation
+Transforms raw input into privacy-safe representations.
 
 Guarantee:
-> No unfiltered identity data enters the system.
+> No raw sensitive data persists beyond ingestion boundary.
 
 ---
 
 ### 5.2 UGD (Universal Governance Domain)
-
-Provides:
-- identity resolution (users, agents, orgs)
-- policy enforcement (deny-by-default)
-- authorization decisions
+Defines global identity + policy enforcement.
 
 Guarantee:
-> No action executes without explicit policy approval.
+> No operation executes without explicit authorization.
 
 ---
 
 ### 5.3 Trust Graph
+Dynamic weighted graph:
 
-Computes:
-- org-to-org trust scores
-- agent reliability metrics
-- time-decayed interaction history
+```text
+Trust(A,B) = f(interactions, violations, time decay)
+```
 
-Function:
-> Determines whether cross-boundary operations are safe.
+Used for cross-org routing decisions.
 
 ---
 
 ### 5.4 AnyDB
+Provides semantic normalization across heterogeneous systems:
 
-Handles:
-- schema normalization
-- semantic interoperability
-- metadata preservation
+- relational
+- document
+- graph
+- event
+- vector
 
 Guarantee:
-> All data has a consistent, portable structure.
+> Data becomes portable meaning, not raw structure.
 
 ---
 
 ### 5.5 Federation Router
+Implements constrained cross-org communication:
 
-Responsible for:
-- cross-org routing decisions
-- trust-weighted destination selection
-- policy enforcement before transfer
-
-Guarantee:
-> No direct system-to-system communication exists.
+- trust-aware routing
+- policy pre-check
+- destination ranking
+- flow rejection
 
 ---
 
 ### 5.6 Fabric Engine
+Executes immutable state transitions:
 
-Executes:
-- state transitions
 - event emission
-- immutable audit logging
-
-Guarantee:
-> All system changes are traceable and replayable.
+- audit logging
+- reconciliation loops
+- replay support
 
 ---
 
 ## 6. System Invariants
 
 ### Identity Invariant
-Every action must be tied to a resolvable identity.
+All transitions must map to a resolvable identity.
 
 ### Privacy Invariant
-All inputs must pass PII filtering before processing.
+All data must pass PII sanitization before processing.
 
 ### Governance Invariant
-All actions require explicit authorization.
+All actions require explicit policy approval.
 
 ### Trust Invariant
-Cross-org actions require trust validation.
+Cross-boundary actions require trust validation.
 
 ### Execution Invariant
-All state changes must be immutable events.
+All changes are immutable events.
 
 ### Reconciliation Invariant
-System state must be fully replayable from event logs.
+System state must be fully reconstructable from event history.
 
 ---
 
-## 7. Execution Model
+## 7. Failure Model
 
-Fabric operates as a deterministic pipeline:
+Fabric assumes failure modes:
 
-```text
-Command → Sanitize → Authorize → Trust Evaluate → Map → Route → Execute → Reconcile
-```
+- partial trust corruption
+- schema divergence across orgs
+- delayed reconciliation drift
+- policy misalignment between domains
+
+Resolution strategy:
+
+- event replay
+- trust decay correction
+- reconciliation loops
+- deterministic rollback reconstruction
 
 ---
 
 ## 8. Multi-Organization Model
 
-Organizations are NOT data boundaries.
+Organizations are not data containers.
 They are:
 
 - policy boundaries
 - trust boundaries
-- accountability boundaries
+- accountability domains
 
-Data flows across them only through governed transitions.
+Data flow is governed, not owned.
 
 ---
 
 ## 9. Security Model
 
-- deny-by-default policy enforcement
-- no raw PII persistence
-- full auditability
-- immutable event logs
+- deny-by-default execution
+- immutable audit trails
 - explainable decisions
+- no raw PII persistence
+- cross-org trust gating
 
 ---
 
-## 10. Properties of Fabric
+## 10. Emergent Properties
 
-Fabric guarantees:
+From these constraints, Fabric produces:
 
-- traceability
-- reproducibility
-- controlled cross-org flow
-- trust-aware routing
-- privacy-preserving execution
+- globally consistent state
+- verifiable audit trails
+- trust-adaptive routing
+- privacy-preserving data exchange
+- deterministic multi-org reconciliation
 
 ---
 
 ## 11. Applications
 
-- enterprise data federation
-- multi-agent systems
-- cross-org AI workflows
-- compliance systems (GDPR, SOC2)
-- distributed decision intelligence
+- enterprise federation systems
+- multi-agent coordination networks
+- compliance-driven data platforms
+- distributed AI governance systems
+- cross-organization workflow engines
 
 ---
 
@@ -230,12 +231,12 @@ Fabric guarantees:
 
 Fabric defines a new class of system:
 
-> a governed state circulation network for multi-organization digital ecosystems
+> a deterministic, trust-governed state circulation layer for multi-organization computing systems
 
-It replaces uncontrolled data movement with **auditable, trust-aware, policy-driven state transitions**.
+It replaces uncontrolled data movement with **verifiable, policy-enforced, and replayable state transitions**.
 
 ---
 
 ## Status
 
-Fabric Whitepaper v0.1 — Foundational architecture definition
+Fabric Whitepaper v0.1 — expanded formal model and threat semantics
