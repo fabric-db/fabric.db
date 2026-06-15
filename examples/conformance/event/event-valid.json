@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "anydb-event-v0.1",
+  "eventId": "evt_01HX0000000000000000000000",
+  "transitionId": "trn_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "provider": "surrealdb",
+  "type": "resource.updated",
+  "subjectRef": "agent://agent_repair_001",
+  "resourceRef": "resource://ticket/ticket_123",
+  "sequence": 4,
+  "idempotencyKey": "idem_01HX0000000000000000000000",
+  "emittedAt": "2026-06-15T00:00:02Z"
+}
