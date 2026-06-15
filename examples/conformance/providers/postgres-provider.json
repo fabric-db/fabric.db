@@ -1,0 +1,39 @@
+{
+  "$schema": "https://fabric.db/schemas/anydb-provider.schema.json",
+  "schemaVersion": "anydb-provider-v0.1",
+  "provider": "postgresql",
+  "displayName": "PostgreSQL",
+  "version": "16.0.0",
+  "models": ["relational", "document", "vector"],
+  "capabilities": {
+    "canonicalIdentity": true,
+    "stateTransitions": true,
+    "transactions": true,
+    "temporalHistory": true,
+    "changeEvents": true,
+    "eventOrdering": true,
+    "idempotency": true,
+    "replay": true,
+    "auditLog": true,
+    "provenance": true,
+    "policyDecisionRecords": true,
+    "recordAuthorization": true,
+    "evidence": true,
+    "assertions": true,
+    "driftDetection": true,
+    "reconciliation": true,
+    "fullTextSearch": true,
+    "vectorSearch": true,
+    "schemaValidation": true,
+    "multiTenantIsolation": true
+  },
+  "consistency": {
+    "read": "strong",
+    "write": "transactional",
+    "notes": "Fixture assumes an AnyDB adapter with audit, event, policy, and reconciliation tables."
+  },
+  "endpoints": {
+    "docs": "https://www.postgresql.org/docs/"
+  },
+  "conformance": "anydb-reconciled-v0.1"
+}
