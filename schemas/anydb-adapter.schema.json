@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fabric.db/schemas/anydb-adapter.schema.json",
+  "title": "AnyDB Adapter Manifest",
+  "description": "Machine-readable declaration of an AnyDB adapter implementation, its provider, runtime, entrypoints, and conformance profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "adapter",
+    "provider",
+    "version",
+    "language",
+    "runtime",
+    "providerDeclaration",
+    "conformance",
+    "entrypoints"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "anydb-adapter-v0.1"
+    },
+    "adapter": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{1,80}[a-z0-9]$"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{1,62}[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["rust", "go", "typescript", "python", "java", "other"]
+    },
+    "runtime": {
+      "type": "string",
+      "enum": ["native", "container", "wasm", "http", "grpc", "embedded"]
+    },
+    "providerDeclaration": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "conformance": {
+      "type": "string",
+      "enum": [
+        "anydb-core-v0.1",
+        "anydb-event-v0.1",
+        "anydb-trust-v0.1",
+        "anydb-reconciled-v0.1"
+      ]
+    },
+    "entrypoints": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "library": { "type": "string" },
+        "container": { "type": "string" },
+        "http": { "type": "string", "format": "uri" },
+        "grpc": { "type": "string", "format": "uri" },
+        "wasm": { "type": "string" }
+      }
+    },
+    "maintainers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "capabilityOverrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixtureProfile": { "type": "string" },
+        "namespace": { "type": "string" },
+        "supportsDeterministicMode": { "type": "boolean" },
+        "supportsDryRun": { "type": "boolean" }
+      }
+    }
+  }
+}
