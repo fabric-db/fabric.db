@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "anydb-command-v0.1",
+  "commandId": "cmd_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "workspaceId": "workspace_ops",
+  "subject": {
+    "type": "agent",
+    "id": "agent_repair_001"
+  },
+  "intent": "resource.update",
+  "target": {
+    "provider": "surrealdb",
+    "model": "document",
+    "resourceType": "ticket",
+    "resourceId": "ticket_123"
+  },
+  "constraints": {
+    "approvalRequired": true,
+    "maxRisk": "medium"
+  },
+  "idempotencyKey": "idem_01HX0000000000000000000000",
+  "requestedAt": "2026-06-15T00:00:00Z"
+}
