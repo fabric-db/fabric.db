@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "anydb-transition-v0.1",
+  "transitionId": "trn_01HX0000000000000000000000",
+  "commandId": "cmd_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "provider": "surrealdb",
+  "resource": {
+    "type": "ticket",
+    "id": "ticket_123"
+  },
+  "operation": "update",
+  "beforeRef": "state://ticket_123@v3",
+  "afterRef": "state://ticket_123@v4",
+  "decisionRef": "decision://dec_01HX0000000000000000000000",
+  "evidenceRefs": ["evidence://evd_01HX0000000000000000000000"],
+  "occurredAt": "2026-06-15T00:00:01Z"
+}
