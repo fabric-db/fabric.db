@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "anydb-desired-state-v0.1",
+  "desiredStateId": "dst_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "provider": "surrealdb",
+  "resource": {
+    "type": "ticket",
+    "id": "ticket_123"
+  },
+  "spec": {
+    "status": "resolved",
+    "priority": "normal"
+  },
+  "declaredBy": "agent://agent_repair_001",
+  "declaredAt": "2026-06-15T00:00:00Z"
+}
