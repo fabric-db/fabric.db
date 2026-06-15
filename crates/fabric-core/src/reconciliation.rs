@@ -1,5 +1,5 @@
-//! Fabric Reconciliation Layer v0.2
-//! CRDT + gossip + trust-aware convergence engine (production-grade foundation)
+//! Fabric Reconciliation Layer v0.3
+//! CRDT + gossip + trust-weighted consensus + BFT-ready convergence engine
 
 use crate::event_store::{EventStore, FabricEvent};
 use serde::{Serialize, Deserialize};
@@ -29,7 +29,34 @@ impl VectorClock {
 }
 
 // -----------------------------
-// CRDT State (LWW-style baseline)
+// Trust Model (NEW)
+// -----------------------------
+
+#[derive(Clone)]
+pub struct TrustModel {
+    pub scores: Arc<Mutex<HashMap<String, f64>>>,
+}
+
+impl TrustModel {
+    pub fn new() -> Self {
+        Self {
+            scores: Arc::new(Mutex::new(HashMap::new())),
+        }
+    }
+
+    pub fn score(&self, node: &str) -> f64 {
+        *self.scores.lock().unwrap().get(node).unwrap_or(&0.5)
+    }
+
+    pub fn update(&self, node: &str, delta: f64) {
+        let mut map = self.scores.lock().unwrap();
+        let entry = map.entry(node.to_string()).or_insert(0.5);
+        *entry = (*entry + delta).clamp(0.0, 1.0);
+    }
+}
+
+// -----------------------------
+// CRDT State (LWW)
 // -----------------------------
 
 #[derive(Clone)]
@@ -46,7 +73,6 @@ impl CRDTState {
 
     pub fn apply(&self, key: String, value: serde_json::Value, ts: u64) {
         let mut map = self.data.lock().unwrap();
-
         match map.get(&key) {
             Some((_, existing_ts)) if *existing_ts >= ts => return,
             _ => {
@@ -66,7 +92,7 @@ impl CRDTState {
 }
 
 // -----------------------------
-// Gossip Node View
+// Peer View (Gossip Topology)
 // -----------------------------
 
 #[derive(Clone)]
@@ -91,7 +117,7 @@ impl PeerView {
 }
 
 // -----------------------------
-// Reconciliation Engine
+// Reconciler (v0.3)
 // -----------------------------
 
 #[derive(Clone)]
@@ -100,6 +126,7 @@ pub struct Reconciler {
     pub state: CRDTState,
     pub clock: Arc<Mutex<VectorClock>>,
     pub peers: PeerView,
+    pub trust: TrustModel,
 }
 
 impl Reconciler {
@@ -109,37 +136,70 @@ impl Reconciler {
             state: CRDTState::new(),
             clock: Arc::new(Mutex::new(VectorClock::default())),
             peers: PeerView::new(),
-        }
-    }
-
-    pub fn replay(&self, node_id: &str) {
-        let events = self.store.replay();
-
-        self.clock.lock().unwrap().tick(node_id);
-
-        for event in events {
-            let ts = event.timestamp as u64;
-            self.state.apply(event.event_id, serde_json::json!({
-                "org": event.org,
-                "actor": event.actor,
-                "action": event.action
-            }), ts);
+            trust: TrustModel::new(),
         }
     }
 
     // -----------------------------
-    // Gossip Sync (logical model)
+    // Replay with trust weighting
+    // -----------------------------
+
+    pub fn replay(&self, node_id: &str) {
+        let events = self.store.replay();
+        self.clock.lock().unwrap().tick(node_id);
+
+        for event in events {
+            let ts = event.timestamp as u64;
+            let node_trust = self.trust.score(&event.actor);
+
+            // trust-weighted acceptance threshold
+            let adjusted_ts = (ts as f64 * node_trust) as u64;
+
+            self.state.apply(
+                event.event_id.clone(),
+                serde_json::json!({
+                    "org": event.org,
+                    "actor": event.actor,
+                    "action": event.action,
+                    "trust": node_trust
+                }),
+                adjusted_ts,
+            );
+        }
+    }
+
+    // -----------------------------
+    // Gossip sync (enhanced)
     // -----------------------------
 
     pub fn gossip(&self, remote: Vec<FabricEvent>) {
         for event in remote {
             let ts = event.timestamp as u64;
-            self.state.apply(event.event_id, serde_json::json!({
-                "org": event.org,
-                "actor": event.actor,
-                "action": event.action
-            }), ts);
+            let trust = self.trust.score(&event.actor);
+            let weighted = (ts as f64 * trust) as u64;
+
+            self.state.apply(
+                event.event_id.clone(),
+                serde_json::json!({
+                    "org": event.org,
+                    "actor": event.actor,
+                    "action": event.action,
+                    "trust": trust
+                }),
+                weighted,
+            );
         }
+    }
+
+    // -----------------------------
+    // BFT-ready consensus check (simplified quorum model)
+    // -----------------------------
+
+    pub fn quorum_accept(&self, approvals: usize, total: usize) -> bool {
+        if total == 0 {
+            return false;
+        }
+        approvals as f64 / total as f64 >= 0.66
     }
 
     pub fn learn_peer(&self, node: String) {
@@ -157,18 +217,19 @@ impl Reconciler {
 
 /*
 -------------------------------------------------
-UPGRADE NOTES (v0.2)
+SYSTEM UPGRADE (v0.3)
 -------------------------------------------------
 
-✔ LWW CRDT introduced (timestamp-based conflict resolution)
-✔ Gossip sync model added (event exchange primitive)
-✔ Peer discovery model introduced
-✔ Deterministic snapshot guarantees improved
+✔ Trust-weighted reconciliation introduced
+✔ Actor-based trust scoring integrated
+✔ Weighted timestamps for convergence influence
+✔ Quorum-based acceptance primitive (BFT seed)
+✔ Gossip enhanced with trust bias
 
 NEXT EVOLUTION:
-- Replace gossip stub with real network transport (gRPC)
-- Add causal consistency (vector-clock merge rules)
-- Add trust-weighted reconciliation (Control Plane integration)
-- Add Byzantine fault tolerance layer
-- Integrate federation.rs into reconciliation flow
+- Replace heuristic trust model with Control Plane integration
+- Add real BFT (PBFT / HotStuff-inspired flow)
+- Add cryptographic event signatures
+- Add anti-Byzantine anomaly detection
+- Replace HashMap CRDT with full OR-Set
 */
