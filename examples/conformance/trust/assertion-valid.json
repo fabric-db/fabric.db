@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "anydb-assertion-v0.1",
+  "assertionId": "ast_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "issuer": "provider://surrealdb",
+  "subjectRef": "resource://ticket/ticket_123",
+  "claim": "state.transition.verified",
+  "status": "verified",
+  "evidenceRefs": ["evidence://evd_01HX0000000000000000000000"],
+  "issuedAt": "2026-06-15T00:00:04Z",
+  "expiresAt": "2026-07-15T00:00:04Z"
+}
