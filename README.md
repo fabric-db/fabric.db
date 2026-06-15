@@ -110,6 +110,7 @@ specs/      Human-readable specifications
 schemas/    JSON Schemas for canonical records
 docs/       Publishing and adoption documents
 examples/   Example records and flows
+tools/      Validation and conformance helpers
 ```
 
 ## Published specifications
@@ -137,6 +138,14 @@ AnyDB is the database-independent capability of fabric.db: any database, any mod
 
 - [AnyDB domain examples](examples/anydb-domains/)
 - [AnyDB conformance fixtures](examples/conformance/)
+
+## Validation
+
+```bash
+python tools/validate_anydb.py
+```
+
+The same validation runs in GitHub Actions through the Validate AnyDB workflow.
 
 ## Container
 
