@@ -1,0 +1,32 @@
+{
+  "$schema": "https://fabric.db/schemas/anydb-domain.schema.json",
+  "schemaVersion": "anydb-domain-v0.1",
+  "domain": "provider",
+  "displayName": "Provider Domain",
+  "type": "provider",
+  "maturity": "defined",
+  "description": "Capability, consistency, limit, endpoint, adapter, and conformance metadata for AnyDB providers.",
+  "records": [
+    "provider",
+    "adapter",
+    "capability",
+    "limit",
+    "endpoint",
+    "conformanceReport"
+  ],
+  "requiredCapabilities": [
+    "canonicalIdentity",
+    "auditLog",
+    "provenance"
+  ],
+  "optionalCapabilities": [
+    "schemaValidation",
+    "multiTenantIsolation",
+    "policyDecisionRecords",
+    "evidence",
+    "assertions"
+  ],
+  "conformanceProfiles": [
+    "anydb-core-v0.1"
+  ]
+}
