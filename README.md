@@ -131,13 +131,16 @@ AnyDB is the database-independent capability of fabric.db: any database, any mod
 - [AnyDB Protocol](specs/anydb-protocol.md)
 - [AnyDB Conformance](specs/anydb-conformance.md)
 - [AnyDB Reconciliation](specs/anydb-reconciliation.md)
+- [AnyDB Adapter SDK](specs/anydb-adapter-sdk.md)
 - [AnyDB Provider Capability Schema](schemas/anydb-provider.schema.json)
 - [AnyDB Domain Declaration Schema](schemas/anydb-domain.schema.json)
+- [AnyDB Adapter Manifest Schema](schemas/anydb-adapter.schema.json)
 
 ## AnyDB examples
 
 - [AnyDB domain examples](examples/anydb-domains/)
 - [AnyDB conformance fixtures](examples/conformance/)
+- [AnyDB adapter examples](examples/adapters/)
 
 ## Validation
 
