@@ -1,0 +1,38 @@
+{
+  "$schema": "https://fabric.db/schemas/anydb-domain.schema.json",
+  "schemaVersion": "anydb-domain-v0.1",
+  "domain": "agent",
+  "displayName": "Agent Domain",
+  "type": "platform",
+  "maturity": "defined",
+  "description": "Governed operational state for agents, objectives, tool calls, decisions, outcomes, evaluations, trust, and kill-switch behavior.",
+  "records": [
+    "agent",
+    "objective",
+    "toolCall",
+    "decision",
+    "outcome",
+    "evaluation",
+    "trustScore",
+    "killSwitch"
+  ],
+  "requiredCapabilities": [
+    "canonicalIdentity",
+    "stateTransitions",
+    "auditLog",
+    "provenance"
+  ],
+  "optionalCapabilities": [
+    "policyDecisionRecords",
+    "recordAuthorization",
+    "evidence",
+    "assertions",
+    "driftDetection",
+    "reconciliation"
+  ],
+  "conformanceProfiles": [
+    "anydb-core-v0.1",
+    "anydb-trust-v0.1",
+    "anydb-reconciled-v0.1"
+  ]
+}
