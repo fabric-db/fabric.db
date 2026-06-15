@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fabric-db.org/schema/event.schema.json",
+  "title": "Fabric Event",
+  "type": "object",
+  "required": ["id", "tenant", "type", "actor", "action", "created_at"],
+  "properties": {
+    "id": { "type": "string" },
+    "tenant": { "type": "string" },
+    "type": {
+      "type": "string",
+      "examples": ["agent.created", "tool.invoked", "drift.detected"]
+    },
+    "actor": { "type": "string" },
+    "subject": { "type": "string" },
+    "action": { "type": "string" },
+    "resource": { "type": "string" },
+    "payload": { "type": "object" },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}
