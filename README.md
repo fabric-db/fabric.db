@@ -121,6 +121,16 @@ examples/   Example records and flows
 - [Fabric Trust Model](specs/fabric-trust-model.md)
 - [Fabric Conformance](specs/fabric-conformance.md)
 
+## AnyDB specifications
+
+AnyDB is the database-independent capability of fabric.db: any database, any model, one governed Fabric.
+
+- [AnyDB positioning](docs/anydb.md)
+- [AnyDB Protocol](specs/anydb-protocol.md)
+- [AnyDB Conformance](specs/anydb-conformance.md)
+- [AnyDB Reconciliation](specs/anydb-reconciliation.md)
+- [AnyDB Provider Capability Schema](schemas/anydb-provider.schema.json)
+
 ## Container
 
 The canonical image path is:
