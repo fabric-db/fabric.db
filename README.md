@@ -133,6 +133,11 @@ AnyDB is the database-independent capability of fabric.db: any database, any mod
 - [AnyDB Provider Capability Schema](schemas/anydb-provider.schema.json)
 - [AnyDB Domain Declaration Schema](schemas/anydb-domain.schema.json)
 
+## AnyDB examples
+
+- [AnyDB domain examples](examples/anydb-domains/)
+- [AnyDB conformance fixtures](examples/conformance/)
+
 ## Container
 
 The canonical image path is:
