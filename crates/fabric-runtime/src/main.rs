@@ -5,8 +5,10 @@ use axum::{routing::{get, post}, Json, Router};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
-// Wire Control Plane into runtime
 use fabric_control_plane::{ControlPlane};
+use fabric_core::{FabricCore, Identity};
+use serde_json::json;
+use chrono;
 
 #[derive(Debug, Deserialize)]
 pub struct ExecuteRequest {
@@ -21,6 +23,7 @@ pub struct ExecuteRequest {
 pub struct ExecuteResponse {
     pub allowed: bool,
     pub reason: String,
+    pub event_id: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -30,69 +33,87 @@ pub struct Health {
 }
 
 // -----------------------------
-// Runtime State (now Control-Plane backed)
+// Runtime State (FULL PIPELINE)
 // -----------------------------
 
 #[derive(Clone)]
 pub struct RuntimeState {
     pub control_plane: ControlPlane,
+    pub core: std::sync::Mutex<FabricCore>,
 }
 
 impl RuntimeState {
     pub fn new() -> Self {
-        let mut cp = ControlPlane::new();
-
-        // minimal bootstrap policy (default allow rule for runtime bring-up)
-        use fabric_control_plane::{new_policy, Rule};
-
-        let policy = new_policy(
-            "default",
-            "0.1",
-            vec![Rule {
-                action: "*".to_string(),
-                allow: true,
-                min_trust: 0.0,
-            }],
-        );
-
-        cp.register_policy(policy);
-
         Self {
-            control_plane: cp,
+            control_plane: ControlPlane::new(),
+            core: std::sync::Mutex::new(FabricCore::new()),
         }
     }
 
-    pub fn evaluate(&self, org: &str, action: &str, source: &str, target: &str) -> (bool, String) {
-        let result = self.control_plane.evaluate(org, action, source, target);
+    pub fn execute(&self, req: ExecuteRequest) -> ExecuteResponse {
+        // 1. Control Plane evaluation
+        let eval = self
+            .control_plane
+            .evaluate(&req.org, &req.action, &req.source, &req.target);
 
-        (result.allowed, result.reason)
+        if !eval.allowed {
+            return ExecuteResponse {
+                allowed: false,
+                reason: eval.reason,
+                event_id: None,
+            };
+        }
+
+        // 2. Core event execution
+        let identity = Identity {
+            id: req.source.clone(),
+            org: req.org.clone(),
+            role: "runtime-agent".to_string(),
+        };
+
+        let mut core = self.core.lock().unwrap();
+
+        let event = core.execute(
+            identity,
+            &req.action,
+            json!(req.payload),
+            chrono::Utc::now().timestamp(),
+        );
+
+        ExecuteResponse {
+            allowed: true,
+            reason: "EXECUTED".to_string(),
+            event_id: Some(event.event_id),
+        }
     }
 }
 
-async fn execute_handler(Json(req): Json<ExecuteRequest>) -> Json<ExecuteResponse> {
-    let runtime = RuntimeState::new();
-
-    let (allowed, reason) = runtime.evaluate(&req.org, &req.action, &req.source, &req.target);
-
-    Json(ExecuteResponse { allowed, reason })
+async fn execute_handler(
+    axum::extract::State(state): axum::extract::State<RuntimeState>,
+    Json(req): Json<ExecuteRequest>,
+) -> Json<ExecuteResponse> {
+    Json(state.execute(req))
 }
 
 async fn health() -> Json<Health> {
     Json(Health {
         status: "ok".into(),
-        system: "fabric-runtime-v0.1-control-plane-wired".into(),
+        system: "fabric-runtime-v0.1-full-wired".into(),
     })
 }
 
 #[tokio::main]
 async fn main() {
+    let state = RuntimeState::new();
+
     let app = Router::new()
         .route("/health", get(health))
-        .route("/fabric/execute", post(execute_handler));
+        .route("/fabric/execute", post(execute_handler))
+        .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
-    println!("🚀 Fabric Runtime (Control Plane Wired) listening on {}", addr);
+    println!("🚀 Fabric FULL Runtime (Control Plane + Core Wired) on {}", addr);
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
