@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "anydb-policy-decision-v0.1",
+  "decisionId": "dec_01HX0000000000000000000000",
+  "commandId": "cmd_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "engine": "opa",
+  "result": "allow",
+  "matchedPolicies": ["policy://ticket-update-v1"],
+  "approvals": ["approval://apr_01HX0000000000000000000000"],
+  "decidedAt": "2026-06-15T00:00:00Z"
+}
