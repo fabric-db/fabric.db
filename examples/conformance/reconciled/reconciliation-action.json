@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "anydb-reconciliation-action-v0.1",
+  "actionId": "rec_01HX0000000000000000000000",
+  "driftReportId": "drf_01HX0000000000000000000000",
+  "mode": "apply",
+  "operation": "update",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/status",
+      "value": "resolved"
+    },
+    {
+      "op": "replace",
+      "path": "/priority",
+      "value": "normal"
+    }
+  ],
+  "decisionRef": "decision://dec_01HX0000000000000000000000",
+  "requestedBy": "agent://agent_repair_001",
+  "requestedAt": "2026-06-15T00:00:12Z"
+}
