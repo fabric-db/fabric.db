@@ -1,0 +1,39 @@
+{
+  "$schema": "https://fabric.db/schemas/anydb-provider.schema.json",
+  "schemaVersion": "anydb-provider-v0.1",
+  "provider": "opensearch",
+  "displayName": "OpenSearch",
+  "version": "2.0.0",
+  "models": ["search", "document", "vector"],
+  "capabilities": {
+    "canonicalIdentity": true,
+    "stateTransitions": true,
+    "transactions": false,
+    "temporalHistory": false,
+    "changeEvents": true,
+    "eventOrdering": false,
+    "idempotency": true,
+    "replay": false,
+    "auditLog": true,
+    "provenance": true,
+    "policyDecisionRecords": true,
+    "recordAuthorization": true,
+    "evidence": true,
+    "assertions": true,
+    "driftDetection": true,
+    "reconciliation": false,
+    "fullTextSearch": true,
+    "vectorSearch": true,
+    "schemaValidation": true,
+    "multiTenantIsolation": true
+  },
+  "consistency": {
+    "read": "eventual",
+    "write": "eventual",
+    "notes": "Search providers can participate in AnyDB while honestly declaring indexing and replay limits."
+  },
+  "endpoints": {
+    "docs": "https://opensearch.org/docs/"
+  },
+  "conformance": "anydb-trust-v0.1"
+}
