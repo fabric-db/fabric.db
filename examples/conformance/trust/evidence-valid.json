@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "anydb-evidence-v0.1",
+  "evidenceId": "evd_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "subjectRef": "agent://agent_repair_001",
+  "resourceRef": "resource://ticket/ticket_123",
+  "transitionRef": "transition://trn_01HX0000000000000000000000",
+  "kind": "state-diff",
+  "artifactRef": "artifact://ticket_123/state-diff-v4.json",
+  "checksum": {
+    "algorithm": "sha256",
+    "value": "5f70bf18a08660b3e0c9f7f5b4d9357a9f0f40a7ffec9f5a0c3d6bbd2c6d8f01"
+  },
+  "capturedAt": "2026-06-15T00:00:03Z"
+}
