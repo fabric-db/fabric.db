@@ -90,75 +90,48 @@ fabric.db provides canonical models for:
 
 fabric.db is designed around eight layers:
 
-```text
-Identity Layer
-Contract Layer
-Policy Layer
-Command Layer
-Decision Layer
-Event + Evidence Layer
-Assertion + Trust Layer
-State + Reconciliation Layer
-```
-
-Together, these form the database fabric for governed agents.
+Identity Layer → Contract Layer → Policy Layer → Command Layer → Decision Layer → Event + Evidence Layer → Assertion + Trust Layer → State + Reconciliation Layer
 
 ## Repository structure
 
-```text
-specs/      Human-readable specifications
-schemas/    JSON Schemas for canonical records
-docs/       Publishing and adoption documents
-examples/   Example records and flows
-tools/      Validation and conformance helpers
-```
+- specs/
+- schemas/
+- docs/
+- examples/
+- tools/
 
-## Published specifications
+## AnyDB (Governed Database Capability Layer)
 
-- [Fabric DB Core](specs/fabric-db.md)
-- [Fabric Assertions](specs/fabric-assertions.md)
-- [Fabric State](specs/fabric-state.md)
-- [Fabric Reconciliation](specs/fabric-reconciliation.md)
-- [Fabric Trust Model](specs/fabric-trust-model.md)
-- [Fabric Conformance](specs/fabric-conformance.md)
+AnyDB is the database-independent capability layer of fabric.db.
 
-## AnyDB specifications
+It defines how heterogeneous databases participate in a single governed state fabric.
 
-AnyDB is the database-independent capability of fabric.db: any database, any model, one governed Fabric.
+### Positioning
 
-- [AnyDB positioning](docs/anydb.md)
-- [AnyDB Domains](specs/anydb-domains.md)
-- [AnyDB Protocol](specs/anydb-protocol.md)
-- [AnyDB Conformance](specs/anydb-conformance.md)
-- [AnyDB Reconciliation](specs/anydb-reconciliation.md)
-- [AnyDB Adapter SDK](specs/anydb-adapter-sdk.md)
-- [AnyDB Provider Capability Schema](schemas/anydb-provider.schema.json)
-- [AnyDB Domain Declaration Schema](schemas/anydb-domain.schema.json)
-- [AnyDB Adapter Manifest Schema](schemas/anydb-adapter.schema.json)
+- fabric.db = reference specification + implementation
+- AnyDB = database-independent capability layer
+- The Fabric = full governed state architecture
+- AnyDB Protocol = interoperability contract
 
-## AnyDB examples
+### Definition
 
-- [AnyDB domain examples](examples/anydb-domains/)
-- [AnyDB conformance fixtures](examples/conformance/)
-- [AnyDB adapter examples](examples/adapters/)
+AnyDB is a database-independent fabric that connects relational, document, graph, vector, time-series, event, key-value, and object data through one identity, policy, provenance, and state model.
 
-## Validation
+### Ecosystem
 
-```bash
-python tools/validate_anydb.py
-```
+- specs/anydb
+- schemas/anydb
+- examples/anydb
+- validate_anydb.py
+- CI conformance workflows
 
-The same validation runs in GitHub Actions through the Validate AnyDB workflow.
+### Principle
+
+A database becomes part of AnyDB when it can expose governed state transitions and produce verifiable evidence of changes.
 
 ## Container
 
-The canonical image path is:
-
-```text
 ghcr.io/fabric-db/fabric.db
-```
-
-Run locally:
 
 ```bash
 docker run --rm -p 8000:8000 ghcr.io/fabric-db/fabric.db:latest
