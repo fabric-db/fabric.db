@@ -26,6 +26,9 @@ ALLOWED_CONFORMANCE = {
     "anydb-reconciled-v0.1",
 }
 
+ALLOWED_ADAPTER_LANGUAGES = {"rust", "go", "typescript", "python", "java", "other"}
+ALLOWED_ADAPTER_RUNTIMES = {"native", "container", "wasm", "http", "grpc", "embedded"}
+
 
 def load_json(path: Path) -> Any:
     try:
@@ -64,6 +67,23 @@ def validate_domain(path: Path) -> None:
     require(isinstance(data.get("requiredCapabilities"), list) and data["requiredCapabilities"], f"{path}: requiredCapabilities must be non-empty")
 
 
+def validate_adapter(path: Path) -> None:
+    data = load_json(path)
+    require(data.get("schemaVersion") == "anydb-adapter-v0.1", f"{path}: wrong schemaVersion")
+    require(data.get("adapter"), f"{path}: missing adapter")
+    require(data.get("provider"), f"{path}: missing provider")
+    require(data.get("version"), f"{path}: missing version")
+    require(data.get("language") in ALLOWED_ADAPTER_LANGUAGES, f"{path}: invalid language")
+    require(data.get("runtime") in ALLOWED_ADAPTER_RUNTIMES, f"{path}: invalid runtime")
+    require(data.get("providerDeclaration"), f"{path}: missing providerDeclaration")
+    require(data.get("conformance") in ALLOWED_CONFORMANCE, f"{path}: invalid conformance")
+    require(isinstance(data.get("entrypoints"), dict) and data["entrypoints"], f"{path}: entrypoints must be non-empty")
+
+    provider_declaration = ROOT / data["providerDeclaration"]
+    require(provider_declaration.exists(), f"{path}: providerDeclaration does not exist")
+    validate_provider(provider_declaration)
+
+
 def validate_manifest() -> None:
     manifest = load_json(MANIFEST)
     require(manifest.get("schemaVersion") == "anydb-conformance-manifest-v0.1", "manifest: wrong schemaVersion")
@@ -86,6 +106,11 @@ def validate_manifest() -> None:
         path = ROOT / fixture
         require(path.exists(), f"manifest: missing domain fixture {fixture}")
         validate_domain(path)
+
+    for fixture in manifest.get("adapterFixtures", []):
+        path = ROOT / fixture
+        require(path.exists(), f"manifest: missing adapter fixture {fixture}")
+        validate_adapter(path)
 
 
 def main() -> int:
