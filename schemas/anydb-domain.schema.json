@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fabric.db/schemas/anydb-domain.schema.json",
+  "title": "AnyDB Domain Declaration",
+  "description": "Machine-readable declaration of an AnyDB domain, its maturity, canonical records, and required provider capabilities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "domain",
+    "displayName",
+    "type",
+    "maturity",
+    "records",
+    "requiredCapabilities"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "anydb-domain-v0.1"
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "identity",
+        "policy",
+        "state",
+        "event",
+        "evidence",
+        "trust",
+        "reconciliation",
+        "data-model",
+        "query",
+        "analytics",
+        "agent",
+        "operations",
+        "provider",
+        "marketplace",
+        "relational",
+        "document",
+        "graph",
+        "vector",
+        "time-series",
+        "key-value",
+        "object",
+        "search",
+        "external-service"
+      ]
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "type": {
+      "type": "string",
+      "enum": ["core", "data-model", "platform", "provider", "marketplace"]
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["defined", "modeled", "governed", "reconciled", "certified"]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-zA-Z0-9.-]{0,63}$"
+      }
+    },
+    "requiredCapabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    },
+    "optionalCapabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    },
+    "policies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "schemas": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      }
+    },
+    "examples": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      }
+    },
+    "conformanceProfiles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "anydb-core-v0.1",
+          "anydb-event-v0.1",
+          "anydb-trust-v0.1",
+          "anydb-reconciled-v0.1"
+        ]
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    }
+  },
+  "$defs": {
+    "capability": {
+      "type": "string",
+      "enum": [
+        "canonicalIdentity",
+        "stateTransitions",
+        "transactions",
+        "temporalHistory",
+        "changeEvents",
+        "eventOrdering",
+        "idempotency",
+        "replay",
+        "auditLog",
+        "provenance",
+        "policyDecisionRecords",
+        "recordAuthorization",
+        "evidence",
+        "assertions",
+        "driftDetection",
+        "reconciliation",
+        "fullTextSearch",
+        "vectorSearch",
+        "schemaValidation",
+        "multiTenantIsolation"
+      ]
+    }
+  }
+}
