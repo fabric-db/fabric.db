@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "anydb-drift-report-v0.1",
+  "driftReportId": "drf_01HX0000000000000000000000",
+  "desiredStateId": "dst_01HX0000000000000000000000",
+  "observedStateId": "obs_01HX0000000000000000000000",
+  "tenantId": "tenant_acme",
+  "resourceRef": "resource://ticket/ticket_123",
+  "severity": "medium",
+  "differences": [
+    {
+      "path": "/status",
+      "desired": "resolved",
+      "observed": "open"
+    },
+    {
+      "path": "/priority",
+      "desired": "normal",
+      "observed": "high"
+    }
+  ],
+  "reportedAt": "2026-06-15T00:00:11Z"
+}
