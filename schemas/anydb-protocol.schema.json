@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnyDB Protocol Schema v0.1",
+  "type": "object",
+  "required": ["command", "decision", "event", "reconciliation"],
+  "properties": {
+    "command": {
+      "type": "object",
+      "required": ["command_id", "actor", "action", "target", "timestamp"],
+      "properties": {
+        "command_id": { "type": "string" },
+        "actor": { "type": "string" },
+        "action": { "type": "string" },
+        "target": { "type": "string" },
+        "payload": { "type": "object" },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["decision_id", "command_id", "result"],
+      "properties": {
+        "decision_id": { "type": "string" },
+        "command_id": { "type": "string" },
+        "result": { "type": "string", "enum": ["allow", "deny", "conditional"] },
+        "reason": { "type": "string" },
+        "evaluated_at": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["event_id", "command_id", "type", "timestamp"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "command_id": { "type": "string" },
+        "type": { "type": "string" },
+        "before": { "type": "object" },
+        "after": { "type": "object" },
+        "timestamp": { "type": "string" },
+        "evidence": { "type": "object" }
+      }
+    },
+    "reconciliation": {
+      "type": "object",
+      "required": ["resource", "desired_state", "observed_state", "drift_detected"],
+      "properties": {
+        "resource": { "type": "string" },
+        "desired_state": { "type": "object" },
+        "observed_state": { "type": "object" },
+        "drift_detected": { "type": "boolean" },
+        "actions": { "type": "array", "items": { "type": "string" } },
+        "resolved": { "type": "boolean" }
+      }
+    }
+  }
+}
