@@ -5,7 +5,7 @@ use axum::{routing::{get, post}, Json, Router};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
-use fabric_control_plane::{ControlPlane};
+use fabric_control_plane::ControlPlane;
 use fabric_core::{FabricCore, Identity};
 use serde_json::json;
 use chrono;
