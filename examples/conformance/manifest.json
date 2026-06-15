@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "anydb-conformance-manifest-v0.1",
+  "profiles": [
+    {
+      "profile": "anydb-core-v0.1",
+      "fixtures": [
+        "examples/conformance/core/command-valid.json",
+        "examples/conformance/core/transition-valid.json"
+      ],
+      "providerFixtures": [
+        "examples/conformance/providers/surrealdb-provider.json",
+        "examples/conformance/providers/postgres-provider.json",
+        "examples/conformance/providers/opensearch-provider.json"
+      ]
+    },
+    {
+      "profile": "anydb-event-v0.1",
+      "fixtures": [
+        "examples/conformance/event/event-valid.json"
+      ],
+      "requires": ["anydb-core-v0.1"]
+    },
+    {
+      "profile": "anydb-trust-v0.1",
+      "fixtures": [
+        "examples/conformance/trust/decision-allow.json",
+        "examples/conformance/trust/evidence-valid.json",
+        "examples/conformance/trust/assertion-valid.json"
+      ],
+      "requires": ["anydb-event-v0.1"]
+    },
+    {
+      "profile": "anydb-reconciled-v0.1",
+      "fixtures": [
+        "examples/conformance/reconciled/desired-state.json",
+        "examples/conformance/reconciled/observed-state.json",
+        "examples/conformance/reconciled/drift-report.json",
+        "examples/conformance/reconciled/reconciliation-action.json"
+      ],
+      "requires": ["anydb-trust-v0.1"]
+    }
+  ],
+  "schemas": {
+    "provider": "schemas/anydb-provider.schema.json",
+    "domain": "schemas/anydb-domain.schema.json"
+  },
+  "domainFixtures": [
+    "examples/anydb-domains/agent-domain.json",
+    "examples/anydb-domains/provider-domain.json"
+  ]
+}
