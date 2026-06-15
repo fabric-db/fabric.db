@@ -1,0 +1,272 @@
+# 🌐 Fabric Runtime v0.1 - Kubernetes Production Topology
+# This is a single-cluster reference deployment for Fabric Runtime
+# Includes Edge, Gateway, Federation, Core, Trust, and PII layers
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fabric
+
+---
+
+# ==========================
+# 🧠 PII GATEWAY SERVICE
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pii-gateway
+  namespace: fabric
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pii-gateway
+  template:
+    metadata:
+      labels:
+        app: pii-gateway
+    spec:
+      containers:
+        - name: pii-gateway
+          image: fabric/pii-gateway:0.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MODE
+              value: "redaction"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pii-gateway
+  namespace: fabric
+spec:
+  selector:
+    app: pii-gateway
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+
+# ==========================
+# 🏛️ UGD POLICY GATEWAY
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ugd-gateway
+  namespace: fabric
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ugd-gateway
+  template:
+    metadata:
+      labels:
+        app: ugd-gateway
+    spec:
+      containers:
+        - name: ugd
+          image: fabric/ugd-engine:0.1
+          ports:
+            - containerPort: 8090
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ugd-gateway
+  namespace: fabric
+spec:
+  selector:
+    app: ugd-gateway
+  ports:
+    - port: 80
+      targetPort: 8090
+
+---
+
+# ==========================
+# 🌐 TRUST GRAPH SERVICE
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trust-graph
+  namespace: fabric
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trust-graph
+  template:
+    metadata:
+      labels:
+        app: trust-graph
+    spec:
+      containers:
+        - name: trust-graph
+          image: fabric/trust-graph:0.1
+          ports:
+            - containerPort: 8100
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: trust-graph
+  namespace: fabric
+spec:
+  selector:
+    app: trust-graph
+  ports:
+    - port: 80
+      targetPort: 8100
+
+---
+
+# ==========================
+# 🔁 FEDERATION ROUTER
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation-router
+  namespace: fabric
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: federation-router
+  template:
+    metadata:
+      labels:
+        app: federation-router
+    spec:
+      containers:
+        - name: router
+          image: fabric/federation-router:0.1
+          ports:
+            - containerPort: 8110
+          env:
+            - name: TRUST_GRAPH_URL
+              value: "http://trust-graph.fabric.svc.cluster.local"
+            - name: UGD_URL
+              value: "http://ugd-gateway.fabric.svc.cluster.local"
+            - name: PII_URL
+              value: "http://pii-gateway.fabric.svc.cluster.local"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: federation-router
+  namespace: fabric
+spec:
+  selector:
+    app: federation-router
+  ports:
+    - port: 80
+      targetPort: 8110
+
+---
+
+# ==========================
+# ⚙️ FABRIC CORE ENGINE
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabric-core
+  namespace: fabric
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabric-core
+  template:
+    metadata:
+      labels:
+        app: fabric-core
+    spec:
+      containers:
+        - name: core
+          image: fabric/core-engine:0.1
+          ports:
+            - containerPort: 8120
+          env:
+            - name: EVENT_STORE
+              value: "append-only"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-core
+  namespace: fabric
+spec:
+  selector:
+    app: fabric-core
+  ports:
+    - port: 80
+      targetPort: 8120
+
+---
+
+# ==========================
+# 🌍 EDGE GATEWAY (INGRESS)
+# ==========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabric-edge
+  namespace: fabric
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fabric-edge
+  template:
+    metadata:
+      labels:
+        app: fabric-edge
+    spec:
+      containers:
+        - name: edge
+          image: fabric/edge-gateway:0.1
+          ports:
+            - containerPort: 8088
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-edge
+  namespace: fabric
+spec:
+  type: ClusterIP
+  selector:
+    app: fabric-edge
+  ports:
+    - port: 80
+      targetPort: 8088
+
+---
+
+# ==========================
+# 🔁 FLOW SUMMARY (DEPLOYED REALITY)
+# ==========================
+# Edge → PII → UGD → Federation Router → Trust Graph → Fabric Core
+# This is the enforced runtime path
