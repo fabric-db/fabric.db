@@ -42,10 +42,14 @@
   ],
   "schemas": {
     "provider": "schemas/anydb-provider.schema.json",
-    "domain": "schemas/anydb-domain.schema.json"
+    "domain": "schemas/anydb-domain.schema.json",
+    "adapter": "schemas/anydb-adapter.schema.json"
   },
   "domainFixtures": [
     "examples/anydb-domains/agent-domain.json",
     "examples/anydb-domains/provider-domain.json"
+  ],
+  "adapterFixtures": [
+    "examples/adapters/surrealdb-adapter.manifest.json"
   ]
 }
