@@ -5,9 +5,8 @@ use axum::{routing::{get, post}, Json, Router};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
-// NOTE: In full system, these would be imported from fabric-core and fabric-control-plane crates
-// use fabric_core::FabricCore;
-// use fabric_control_plane::ControlPlane;
+// Wire Control Plane into runtime
+use fabric_control_plane::{ControlPlane};
 
 #[derive(Debug, Deserialize)]
 pub struct ExecuteRequest {
@@ -31,28 +30,42 @@ pub struct Health {
 }
 
 // -----------------------------
-// Mocked runtime state (wiring placeholder)
+// Runtime State (now Control-Plane backed)
 // -----------------------------
 
 #[derive(Clone)]
-pub struct RuntimeState;
+pub struct RuntimeState {
+    pub control_plane: ControlPlane,
+}
 
 impl RuntimeState {
     pub fn new() -> Self {
-        Self
+        let mut cp = ControlPlane::new();
+
+        // minimal bootstrap policy (default allow rule for runtime bring-up)
+        use fabric_control_plane::{new_policy, Rule};
+
+        let policy = new_policy(
+            "default",
+            "0.1",
+            vec![Rule {
+                action: "*".to_string(),
+                allow: true,
+                min_trust: 0.0,
+            }],
+        );
+
+        cp.register_policy(policy);
+
+        Self {
+            control_plane: cp,
+        }
     }
 
     pub fn evaluate(&self, org: &str, action: &str, source: &str, target: &str) -> (bool, String) {
-        // Placeholder: control-plane integration hook
-        if action == "deny" {
-            return (false, "POLICY_DENIED_RUNTIME".into());
-        }
+        let result = self.control_plane.evaluate(org, action, source, target);
 
-        if source == target {
-            return (true, "SELF_TRUSTED".into());
-        }
-
-        (true, format!("EVAL_OK:{}:{}", org, action))
+        (result.allowed, result.reason)
     }
 }
 
@@ -67,7 +80,7 @@ async fn execute_handler(Json(req): Json<ExecuteRequest>) -> Json<ExecuteRespons
 async fn health() -> Json<Health> {
     Json(Health {
         status: "ok".into(),
-        system: "fabric-runtime-v0.1".into(),
+        system: "fabric-runtime-v0.1-control-plane-wired".into(),
     })
 }
 
@@ -79,7 +92,7 @@ async fn main() {
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
-    println!("🚀 Fabric Runtime listening on {}", addr);
+    println!("🚀 Fabric Runtime (Control Plane Wired) listening on {}", addr);
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
