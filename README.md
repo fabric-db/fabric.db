@@ -2,83 +2,61 @@
 
 **The governed state fabric for agentic systems.**
 
-fabric.db defines the canonical database layer for autonomous, multi-agent, event-driven platforms. It treats state, identity, policy, events, decisions, provenance, audit, assertions, and reconciliation as first-class operational data.
+fabric.db defines the canonical database + runtime + governance layer for autonomous, multi-agent, event-driven platforms. It treats state, identity, policy, events, decisions, provenance, audit, assertions, and reconciliation as first-class operational data.
 
-Agents should not operate in invisible memory.  
+---
+
+# 🧠 Core Vision
+
+Agents should not operate in invisible memory.
 They should operate on governed state.
 
-## Why fabric.db exists
+Fabric ensures every action is:
 
-Agent systems fail when:
-
-- state is fragmented
-- actions are not attributable
-- policy is external and disconnected
-- memory is ungoverned
-- events are not replayable
-- decisions are not auditable
-- evidence is missing
-- trust assertions are not verifiable
-- drift is not reconciled
-- identity is weak
-- tools are invoked without durable accountability
-
-fabric.db exists to make agentic systems safe to operate in production.
-
-## Core idea
-
-Every agent action is a state transition.
-
-Every state transition must be:
-
-- typed
-- governed
 - attributable
-- observable
+- policy-governed
+- trust-scored
+- event-sourced
 - replayable
-- evidenced
-- auditable
-- assertable
 - reconcilable
 
-## Trust chain
+---
+
+# 🔁 Trust Chain
 
 ```text
 Command
-   ↓
+  ↓
 Decision
-   ↓
+  ↓
 Event
-   ↓
+  ↓
 Evidence
-   ↓
+  ↓
 Assertion
-   ↓
+  ↓
 State
-   ↓
+  ↓
 Reconciliation
-   ↓
+  ↓
 Trusted State
 ```
 
-## What fabric.db models
+---
 
-fabric.db provides canonical models for:
+# 📦 What fabric.db models
 
 - agents
 - users
 - tenants
 - workspaces
 - tools
-- resources
 - credentials
 - policies
-- approvals
 - commands
 - events
 - decisions
 - actions
-- outcomes
 - evidence
 - assertions
 - provenance
@@ -86,61 +64,168 @@ fabric.db provides canonical models for:
 - reconciliation
 - drift
 
-## Architecture
+---
 
-fabric.db is designed around eight layers:
+# 🧱 Architecture Layers
 
-Identity Layer → Contract Layer → Policy Layer → Command Layer → Decision Layer → Event + Evidence Layer → Assertion + Trust Layer → State + Reconciliation Layer
+Fabric is structured as:
 
-## Repository structure
+```text
+Identity Layer
+  ↓
+Contract Layer
+  ↓
+Policy Layer (UGD)
+  ↓
+Command Layer
+  ↓
+Decision Layer
+  ↓
+Event + Evidence Layer
+  ↓
+Assertion + Trust Layer
+  ↓
+State + Reconciliation Layer
+```
 
-- specs/
-- schemas/
-- docs/
-- examples/
-- tools/
+---
 
-## AnyDB (Governed Database Capability Layer)
+# 🌐 AnyDB (Governed Data Fabric)
 
 AnyDB is the database-independent capability layer of fabric.db.
 
-It defines how heterogeneous databases participate in a single governed state fabric.
+It connects:
 
-### Positioning
+- relational
+- document
+- graph
+- vector
+- event
+- key-value
+- time-series
 
-- fabric.db = reference specification + implementation
-- AnyDB = database-independent capability layer
-- The Fabric = full governed state architecture
-- AnyDB Protocol = interoperability contract
+All under a single governance model:
 
-### Definition
+> identity + policy + provenance + state
 
-AnyDB is a database-independent fabric that connects relational, document, graph, vector, time-series, event, key-value, and object data through one identity, policy, provenance, and state model.
+---
 
-### Ecosystem
+# 🦀 Rust Implementation (New)
 
-- specs/anydb
-- schemas/anydb
-- examples/anydb
-- validate_anydb.py
-- CI conformance workflows
+Fabric is now implemented as a Rust workspace:
 
-### Principle
-
-A database becomes part of AnyDB when it can expose governed state transitions and produce verifiable evidence of changes.
-
-## Container
-
-ghcr.io/fabric-db/fabric.db
-
-```bash
-docker run --rm -p 8000:8000 ghcr.io/fabric-db/fabric.db:latest
+```
+crates/
+├── fabric-core              # event-sourced state engine
+├── fabric-control-plane     # policy + trust + schema governance
+├── fabric-runtime           # API + execution runtime (WIP)
+├── fabric-sdk               # developer SDK (WIP)
 ```
 
-## Status
+---
 
-Initial public specification baseline.
+# ⚙️ Fabric Core
 
-## License
+- event-sourced state machine
+- trust-aware execution engine
+- deterministic replay system
 
+All state is derived from events.
+
+---
+
+# 🧭 Control Plane
+
+The governance brain of Fabric:
+
+- UGD policy engine
+- trust graph computation
+- schema registry (AnyDB governance)
+- federation orchestration
+
+Ensures:
+
+> no execution without explicit governance approval
+
+---
+
+# 🌐 Runtime Plane
+
+Execution layer (WIP):
+
+- edge nodes
+- PII gateway
+- federation router
+- fabric core engine
+- event store
+
+---
+
+# 🧰 SDK Layer
+
+Developer-facing API:
+
+- `/fabric/execute`
+- identity-aware requests
+- trust-scored execution
+- policy-gated responses
+
+---
+
+# 🔐 System Properties
+
+Fabric guarantees:
+
+- deterministic execution
+- deny-by-default governance
+- full auditability
+- trust-aware routing
+- replayable state
+- multi-org federation safety
+
+---
+
+# 🌍 Deployment Model
+
+- multi-region control plane
+- isolated tenant data planes
+- federated trust graph
+- global schema governance
+
+---
+
+# ⚙️ Execution Model
+
+```text
+PII Filter → UGD Policy → Trust Graph → AnyDB Mapping → Federation Router → Fabric Core → Reconciliation
+```
+
+---
+
+# 🚀 Status
+
+### Implemented
+- Fabric Core (Rust)
+- Control Plane (Rust)
+- Whitepaper (formal spec)
+- Cloud architecture (multi-region model)
+
+### In Progress
+- Runtime integration layer
+- SDK completion
+- Event store backend
+
+---
+
+# 🧠 Final Definition
+
+> Fabric is a distributed governance operating system for multi-organization state systems.
+
+It transforms computation into:
+
+> controlled, attributable, trust-aware state transitions.
+
+---
+
+# 📜 License
 Apache-2.0
