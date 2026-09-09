@@ -202,6 +202,51 @@ PII Filter → UGD Policy → Trust Graph → AnyDB Mapping → Federation Route
 
 ---
 
+# 🧪 Test System
+
+fabric.db includes an end-to-end acceptance test system that exercises the production Docker image and canonical SurrealDB schema.
+
+Run the database acceptance suite:
+
+```bash
+make test
+```
+
+Keep the tested database running for inspection:
+
+```bash
+make test-db-keep
+```
+
+Run Rust workspace tests separately:
+
+```bash
+make test-rust
+```
+
+The acceptance system validates:
+
+- production image build and database health
+- schema and helper-function loading
+- tenant, actor, agent, tool, policy, approval and decision records
+- event and provenance traceability
+- desired state, observed state and drift
+- governed record relationships
+- database persistence across restart
+
+Test assets live in:
+
+```text
+tests/run.sh
+tests/acceptance.surql
+TESTING.md
+.github/workflows/ci.yml
+```
+
+CI runs the database acceptance suite automatically on pushes to `main`, pull requests, and manual workflow dispatches.
+
+---
+
 # 🚀 Status
 
 ### Implemented
@@ -209,11 +254,14 @@ PII Filter → UGD Policy → Trust Graph → AnyDB Mapping → Federation Route
 - Control Plane (Rust)
 - Whitepaper (formal spec)
 - Cloud architecture (multi-region model)
+- Database acceptance test system
+- Automated CI validation
 
 ### In Progress
 - Runtime integration layer
 - SDK completion
 - Event store backend
+- Full Rust workspace conformance
 
 ---
 
