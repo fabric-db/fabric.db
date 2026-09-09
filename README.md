@@ -2,27 +2,24 @@
 
 **The governed state fabric for agentic systems.**
 
-fabric.db defines the canonical database + runtime + governance layer for autonomous, multi-agent, event-driven platforms. It treats state, identity, policy, events, decisions, provenance, audit, assertions, and reconciliation as first-class operational data.
+fabric.db is the canonical governed state layer for autonomous, multi-agent, and event-driven systems. It makes identity, policy, decisions, events, provenance, desired state, observed state, drift, and reconciliation explicit operational data instead of leaving them hidden inside application memory.
 
----
+## Core idea
 
-# 🧠 Core Vision
+Agents should not operate on invisible state.
+They should operate on governed, attributable, replayable state.
 
-Agents should not operate in invisible memory.
-They should operate on governed state.
+fabric.db is designed so every meaningful transition can be:
 
-Fabric ensures every action is:
+- attributed to an actor or agent
+- checked against policy
+- recorded as an event
+- linked to provenance
+- compared against desired state
+- inspected for drift
+- replayed and reconciled
 
-- attributable
-- policy-governed
-- trust-scored
-- event-sourced
-- replayable
-- reconcilable
-
----
-
-# 🔁 Trust Chain
+## Trust chain
 
 ```text
 Command
@@ -31,7 +28,7 @@ Decision
   ↓
 Event
   ↓
-Evidence
+Evidence / Provenance
   ↓
 Assertion
   ↓
@@ -42,169 +39,119 @@ Reconciliation
 Trusted State
 ```
 
----
+## Canonical model
 
-# 📦 What fabric.db models
+The current SurrealDB schema includes first-class records for:
 
-- agents
-- users
-- tenants
-- workspaces
-- tools
-- credentials
-- policies
-- commands
-- events
-- decisions
-- actions
-- evidence
-- assertions
+- tenant
+- actor
+- agent
+- tool
+- policy
+- approval
+- event
+- decision
 - provenance
-- state
-- reconciliation
+- desired_state
+- observed_state
 - drift
 
----
+The broader Fabric model also covers commands, evidence, assertions, reconciliation, credentials, workspaces, and governed execution semantics.
 
-# 🧱 Architecture Layers
-
-Fabric is structured as:
+## Architecture
 
 ```text
-Identity Layer
+Identity
   ↓
-Contract Layer
+Contract
   ↓
-Policy Layer (UGD)
+Policy
   ↓
-Command Layer
+Decision
   ↓
-Decision Layer
+Event + Provenance
   ↓
-Event + Evidence Layer
+Desired / Observed State
   ↓
-Assertion + Trust Layer
+Drift Detection
   ↓
-State + Reconciliation Layer
+Reconciliation
+  ↓
+Trusted State
 ```
 
----
-
-# 🌐 AnyDB (Governed Data Fabric)
+## AnyDB
 
 AnyDB is the database-independent capability layer of fabric.db.
 
-It connects:
-
-- relational
-- document
-- graph
-- vector
-- event
-- key-value
-- time-series
-
-All under a single governance model:
-
-> identity + policy + provenance + state
-
----
-
-# 🦀 Rust Implementation (New)
-
-Fabric is now implemented as a Rust workspace:
-
-```
-crates/
-├── fabric-core              # event-sourced state engine
-├── fabric-control-plane     # policy + trust + schema governance
-├── fabric-runtime           # API + execution runtime (WIP)
-├── fabric-sdk               # developer SDK (WIP)
-```
-
----
-
-# ⚙️ Fabric Core
-
-- event-sourced state machine
-- trust-aware execution engine
-- deterministic replay system
-
-All state is derived from events.
-
----
-
-# 🧭 Control Plane
-
-The governance brain of Fabric:
-
-- UGD policy engine
-- trust graph computation
-- schema registry (AnyDB governance)
-- federation orchestration
-
-Ensures:
-
-> no execution without explicit governance approval
-
----
-
-# 🌐 Runtime Plane
-
-Execution layer (WIP):
-
-- edge nodes
-- PII gateway
-- federation router
-- fabric core engine
-- event store
-
----
-
-# 🧰 SDK Layer
-
-Developer-facing API:
-
-- `/fabric/execute`
-- identity-aware requests
-- trust-scored execution
-- policy-gated responses
-
----
-
-# 🔐 System Properties
-
-Fabric guarantees:
-
-- deterministic execution
-- deny-by-default governance
-- full auditability
-- trust-aware routing
-- replayable state
-- multi-org federation safety
-
----
-
-# 🌍 Deployment Model
-
-- multi-region control plane
-- isolated tenant data planes
-- federated trust graph
-- global schema governance
-
----
-
-# ⚙️ Execution Model
+Its purpose is to put multiple data models under the same governance contract:
 
 ```text
-PII Filter → UGD Policy → Trust Graph → AnyDB Mapping → Federation Router → Fabric Core → Reconciliation
+relational
++ document
++ graph
++ vector
++ event
++ key-value
++ time-series
+        ↓
+identity + policy + provenance + state
 ```
 
----
+The repository currently includes a SurrealDB implementation and an `anydb-adapter-surrealdb` crate path alongside the core Fabric crates.
 
-# 🧪 Test System
+## Repository structure
 
-fabric.db includes an end-to-end acceptance test system that exercises the production Docker image and canonical SurrealDB schema.
+```text
+crates/
+├── anydb-adapter-surrealdb
+├── fabric-core
+├── fabric-control-plane
+└── fabric-runtime
+
+surrealdb/
+├── schema.surql
+└── functions.surql
+
+schema/
+└── event.schema.json
+
+tests/
+├── run.sh
+└── acceptance.surql
+```
+
+The Rust workspace is still being completed. Database acceptance testing is intentionally runnable independently from full Rust workspace conformance.
+
+## Run fabric.db
+
+Build the production image:
+
+```bash
+docker build -t fabric-db .
+```
+
+Run it locally:
+
+```bash
+docker run --rm \
+  --name fabric-db \
+  -p 8000:8000 \
+  -v fabric-db-data:/data \
+  fabric-db
+```
+
+Health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
+The container uses SurrealDB and persists data under `/data`.
+
+## Test system
+
+fabric.db includes an end-to-end acceptance test system that tests the production Docker image and canonical schema.
 
 Run the database acceptance suite:
 
@@ -212,7 +159,7 @@ Run the database acceptance suite:
 make test
 ```
 
-Keep the tested database running for inspection:
+Keep the tested database alive for inspection:
 
 ```bash
 make test-db-keep
@@ -224,56 +171,110 @@ Run Rust workspace tests separately:
 make test-rust
 ```
 
-The acceptance system validates:
+The acceptance suite validates:
 
-- production image build and database health
-- schema and helper-function loading
+- production image build
+- SurrealDB health
+- canonical schema loading
+- helper functions
 - tenant, actor, agent, tool, policy, approval and decision records
 - event and provenance traceability
-- desired state, observed state and drift
+- desired and observed state
+- drift representation
 - governed record relationships
-- database persistence across restart
+- persistence across database restart
 
-Test assets live in:
+See [`TESTING.md`](TESTING.md) for the complete test workflow.
+
+## Execution model
 
 ```text
-tests/run.sh
-tests/acceptance.surql
-TESTING.md
-.github/workflows/ci.yml
+Identity
+  ↓
+Policy
+  ↓
+Decision
+  ↓
+Event
+  ↓
+Provenance
+  ↓
+State
+  ↓
+Drift Detection
+  ↓
+Reconciliation
 ```
 
-CI runs the database acceptance suite automatically on pushes to `main`, pull requests, and manual workflow dispatches.
+The intended higher-level runtime path is:
 
----
+```text
+PII Filter
+  → Policy
+  → Trust
+  → AnyDB Mapping
+  → Federation
+  → Fabric Core
+  → Reconciliation
+```
 
-# 🚀 Status
+## System properties
+
+fabric.db is being built around these properties:
+
+- deny-by-default governance
+- attributable execution
+- deterministic and replayable state transitions
+- provenance-aware state
+- trust-aware routing
+- explicit desired vs observed state
+- drift detection and reconciliation
+- multi-tenant and federated operation
+
+## Development status
 
 ### Implemented
-- Fabric Core (Rust)
-- Control Plane (Rust)
-- Whitepaper (formal spec)
-- Cloud architecture (multi-region model)
-- Database acceptance test system
-- Automated CI validation
 
-### In Progress
-- Runtime integration layer
-- SDK completion
-- Event store backend
-- Full Rust workspace conformance
+- canonical SurrealDB schema
+- helper functions
+- Fabric Core codebase
+- Fabric Control Plane codebase
+- Fabric Runtime codebase
+- AnyDB SurrealDB adapter path
+- production Docker image definition
+- database acceptance test system
+- automated CI validation
+- architecture and governance documentation
+
+### In progress
+
+- complete Rust workspace conformance
+- runtime integration layer
+- developer SDK
+- event-store backend abstraction
+- full reconciliation engine
+- multi-backend AnyDB conformance
+
+## Testing in CI
+
+GitHub Actions runs repository validation and the database acceptance suite on pushes to `main`, pull requests, and manual workflow dispatches.
+
+The local and CI entry point is intentionally the same:
+
+```bash
+make test
+```
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GOVERNANCE.md`](GOVERNANCE.md).
+
+## License
+
+Licensed under the **Apache License, Version 2.0**.
+
+See [`LICENSE`](LICENSE) for the full license text.
 
 ---
 
-# 🧠 Final Definition
-
-> Fabric is a distributed governance operating system for multi-organization state systems.
-
-It transforms computation into:
-
-> controlled, attributable, trust-aware state transitions.
-
----
-
-# 📜 License
-Apache-2.0
+> **fabric.db turns autonomous computation into governed, attributable, inspectable state transitions.**
