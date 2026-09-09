@@ -24,17 +24,22 @@ jobs:
           test -f SECURITY.md
           test -f GOVERNANCE.md
           test -f CONTRIBUTING.md
+          test -f Makefile
+          test -f tests/run.sh
+          test -f tests/acceptance.surql
 
       - name: Check required directories
         run: |
           test -d docs
           test -d schema
           test -d surrealdb
+          test -d tests
 
       - name: Check required schema artifacts
         run: |
           test -f schema/event.schema.json
           test -f surrealdb/schema.surql
+          test -f surrealdb/functions.surql
 
   json:
     runs-on: ubuntu-latest
@@ -45,3 +50,13 @@ jobs:
       - name: Validate JSON files
         run: |
           find . -name "*.json" -print0 | xargs -0 -I{} python -m json.tool "{}" > /dev/null
+
+  fabric-db-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run production-image acceptance suite
+        run: make test-db
